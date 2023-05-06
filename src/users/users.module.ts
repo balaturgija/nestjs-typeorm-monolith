@@ -8,13 +8,12 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strateg';
 import { AuthenticationController } from './controllers/authentication.controller';
-import { ConfigModule } from '@nestjs/config';
-import { UsersRepository } from './users.repository';
+import { config } from 'dotenv';
+config();
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UsersRepository]),
-    ConfigModule,
+    TypeOrmModule.forFeature([User]),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

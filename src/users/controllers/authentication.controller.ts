@@ -28,10 +28,12 @@ export class AuthenticationController {
   @Post('login')
   async login(@Req() request: RequestWithUser, @Res() response: Response) {
     const { user } = request;
-    const cookie = await this.authenticationService.getCookieWithJwtToken(
-      user.id,
-    );
-    response.setHeader('Set-Cookie', cookie);
+    const token = await this.authenticationService.createToken({
+      id: user.id,
+      email: user.email,
+      password: user.password,
+    });
+    response.setHeader('x-token', token);
     user.password = undefined;
     return response.send(user);
   }

@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { RegisterDto } from '../dto/register-user.dto';
 import { UsersService } from './users.service';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from '../types/token-payload';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthenticationService {
@@ -41,10 +41,8 @@ export class AuthenticationService {
     }
   }
 
-  async getCookieWithJwtToken(userId: number) {
-    const payload: TokenPayload = { userId };
-    const token = this.jwtService.sign(payload);
-    return `Authentication=${token}; HttpOnly; Path=/ Max-Age=24`;
+  async createToken(tokenPayload: TokenPayload) {
+    return await this.jwtService.signAsync(tokenPayload);
   }
 
   private async verifyPassword(

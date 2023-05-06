@@ -1,4 +1,5 @@
 export interface TokenPayload {
-  userId: number;
-  isSecondFactorAuthenticated?: boolean;
+  id: number;
+  email: string;
+  password: string;
 }
