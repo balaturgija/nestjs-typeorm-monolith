@@ -9,10 +9,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strateg';
 import { AuthenticationController } from './controllers/authentication.controller';
 import { ConfigModule } from '@nestjs/config';
+import { UsersRepository } from './users.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([UsersRepository]),
     ConfigModule,
     PassportModule,
     JwtModule.register({

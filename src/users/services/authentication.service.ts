@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PostgresErrorCode } from '../../database/postgres-error-code.type';
 import { RegisterDto } from '../dto/register-user.dto';
 import { UsersService } from './users.service';
 import * as bcrypt from 'bcrypt';
@@ -21,12 +20,6 @@ export class AuthenticationService {
       createdUser.password = undefined;
       return createdUser;
     } catch (error) {
-      if (error.code === PostgresErrorCode.UniqueViolation) {
-        throw new HttpException(
-          'User with that email already exists',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
