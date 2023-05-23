@@ -1,12 +1,15 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Res,
+  SerializeOptions,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthenticationService } from '../services/authentication.service';
 import { RegisterDto } from '../dto/register-user.dto';
@@ -15,6 +18,10 @@ import { RequestWithUser } from '../types/request-with.user';
 import { Response } from 'express';
 
 @Controller('authentication')
+// response interceptor
+@UseInterceptors(ClassSerializerInterceptor)
+// serialize entity
+@SerializeOptions({ strategy: 'excludeAll' })
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
@@ -26,15 +33,15 @@ export class AuthenticationController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthenticationGuard)
   @Post('login')
-  async login(@Req() request: RequestWithUser, @Res() response: Response) {
+  async login(@Req() request: RequestWithUser) {
     const { user } = request;
     const token = await this.authenticationService.createToken({
       id: user.id,
       email: user.email,
       password: user.password,
     });
-    response.setHeader('x-token', token);
-    user.password = undefined;
-    return response.send(user);
+    // request.res instead res -> advice from creator
+    request.res.setHeader('x-token', token);
+    return user;
   }
 }

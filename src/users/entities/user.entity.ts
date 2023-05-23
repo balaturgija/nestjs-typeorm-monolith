@@ -1,16 +1,36 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Expose } from 'class-transformer';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Address } from '../../addresses/entities/address.entity';
+import { Post } from '../../posts/entities/post.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  public id?: number;
+  id?: number;
 
   @Column({ unique: true })
-  public email: string;
+  @Expose()
+  email: string;
 
   @Column()
-  public name: string;
+  @Expose()
+  name: string;
 
   @Column()
-  public password: string;
+  password: string;
+
+  // eager will always include, cascade will always save address record separate
+  @OneToOne(() => Address, { eager: true, cascade: true })
+  @JoinColumn()
+  address: Address;
+
+  @OneToMany(() => Post, (post: Post) => post.author)
+  posts: Post[];
 }
