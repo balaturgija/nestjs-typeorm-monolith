@@ -4,6 +4,12 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
+import { PostsModule } from './posts/posts.module';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { CoreExceptionFilter } from './core/exception.filter';
+import { RequestBodyValidationPipe } from './core/request-body.validation.pipe';
+import { AddressesModule } from './addresses/addresses.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -20,9 +26,23 @@ import { User } from './users/entities/user.entity';
       database: process.env.DB_NAME,
       entities: [User],
       synchronize: true,
+      logging: ['query', 'error'],
     }),
     SubscribersModule,
     UsersModule,
+    PostsModule,
+    AddressesModule,
+    CategoriesModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: CoreExceptionFilter,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: RequestBodyValidationPipe,
+    },
   ],
 })
 export class AppModule {}
